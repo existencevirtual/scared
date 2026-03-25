@@ -52,7 +52,11 @@ export function readAndDestroySecret(id: string, keyHex: string): string | null 
     store.delete(id);
     return null;
   }
-  if (entry.key !== keyHex) return null;
+  try {
+    if (!crypto.timingSafeEqual(Buffer.from(entry.key, 'hex'), Buffer.from(keyHex, 'hex'))) return null;
+  } catch {
+    return null;
+  }
   
   try {
     const key = Buffer.from(keyHex, 'hex');
