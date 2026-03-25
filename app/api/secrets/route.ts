@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSecret } from '@/lib/secrets';
 
+/**
+ * POST /api/secrets
+ * Creates an AES-256-GCM encrypted secret and returns its ID and decryption key.
+ * Body: { secret: string, ttl?: number (minutes, max 10080) }
+ * Response 200: { id: string, key: string }
+ * Response 400: { error: string }
+ */
 export async function POST(req: NextRequest) {
   try {
     const { secret, ttl } = await req.json();

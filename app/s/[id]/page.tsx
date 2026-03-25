@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
-type Status = 'checking' | 'ready' | 'loading' | 'revealed' | 'gone';
+type Status = 'checking' | 'ready' | 'loading' | 'revealed' | 'gone' | 'invalid-link';
 
 export default function SecretPage() {
   const params = useParams<{ id: string }>();
@@ -29,7 +29,7 @@ export default function SecretPage() {
     setStatus('loading');
     try {
       const key = window.location.hash.slice(1);
-      if (!key) { setStatus('gone'); return; }
+      if (!key) { setStatus('invalid-link'); return; }
       const res = await fetch(`/api/secrets/${params.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -139,6 +139,24 @@ export default function SecretPage() {
                 <h2 className="text-xl font-semibold text-white">Secret Not Found</h2>
                 <p className="text-gray-400 text-sm mt-2">
                   This secret has already been viewed, has expired, or the link is invalid.
+                </p>
+              </div>
+              <Link
+                href="/"
+                className="block w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 text-center"
+              >
+                Create a New Secret
+              </Link>
+            </div>
+          )}
+
+          {status === 'invalid-link' && (
+            <div className="space-y-6 text-center">
+              <div>
+                <div className="text-5xl mb-4">🔗</div>
+                <h2 className="text-xl font-semibold text-white">Incomplete Link</h2>
+                <p className="text-gray-400 text-sm mt-2">
+                  The link you followed is missing the decryption key. Make sure you copied the full URL including the <code className="text-indigo-400">#key</code> part at the end.
                 </p>
               </div>
               <Link

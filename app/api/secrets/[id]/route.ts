@@ -1,11 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readAndDestroySecret, secretExists } from '@/lib/secrets';
 
+/**
+ * GET /api/secrets/[id]
+ * Checks whether a secret exists without consuming it.
+ * Response 200: { exists: boolean }
+ */
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const exists = secretExists(params.id);
   return NextResponse.json({ exists });
 }
 
+/**
+ * POST /api/secrets/[id]
+ * Decrypts and permanently destroys a secret. Can only be called once.
+ * Body: { key: string } — the AES decryption key (hex)
+ * Response 200: { secret: string }
+ * Response 404: { error: string } — not found, already viewed, or expired
+ */
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { key } = await req.json();
