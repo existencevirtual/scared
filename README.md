@@ -1,3 +1,3 @@
 # scared
 secret
-New era
+Auto learner, need knowledge. 
